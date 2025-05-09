@@ -24,7 +24,7 @@ pipeline{
                    def imageTag = previousBuildNumber ?: 'latest'
                    env.IMAGE_TAG_VERSION = imageTag
                    echo "Previous build TAG set as env variable: ${env.IMAGE_TAG_VERSION}"
-                   sh "sudo docker rmi devsahamerlin/tasksmanager:${env.IMAGE_TAG_VERSION} -f"
+                   sh "sudo docker rmi nickymaggie2017/tasksmanager:${env.IMAGE_TAG_VERSION} -f"
                }
             }
           }
@@ -50,8 +50,8 @@ pipeline{
             steps {
                 script {
                     git branch: 'main',
-                    credentialsId: 'github-user-credentials',
-                    url: 'https://github.com/devsahamerlin/acn-devsecops-upskills.git'
+                    credentialsId: 'nicolas-github-user-credentials',
+                    url: 'https://github.com/FSX4ever/CICDTutorial.git'
                 }
             }
         }
@@ -128,13 +128,13 @@ pipeline{
 
         stage('Build and Push Docker Image') {
            environment {
-             DOCKER_IMAGE = "devsahamerlin/tasksmanager:${BUILD_NUMBER}"
-             REGISTRY_CREDENTIALS = credentials('docker')
+             DOCKER_IMAGE = "nickymaggie2017/tasksmanager:${BUILD_NUMBER}"
+             REGISTRY_CREDENTIALS = credentials('nicolas-docker')
            }
            steps {
              script {
                 sh "tree"
-                "sudo docker images | grep devsahamerlin/tasksmanager*"
+                "sudo docker images | grep nickymaggie2017/tasksmanager*"
                 sh "sudo docker build -t ${DOCKER_IMAGE} ."
                 def dockerImage = docker.image("${DOCKER_IMAGE}")
                  docker.withRegistry('https://index.docker.io/v1/', "docker") {
@@ -145,7 +145,7 @@ pipeline{
         }
         stage("TRIVY DOCKER IMAGE SCAN"){
             steps{
-                sh "trivy image devsahamerlin/tasksmanager:16 --format table"
+                sh "trivy image nickymaggie2017/tasksmanager:BUILD_NUMBER --format table"
                 //sh "trivy image devsahamerlin/tasksmanager:${BUILD_NUMBER} --format table --exit-code 1 --severity CRITICAL"
             }
         }
@@ -155,8 +155,8 @@ pipeline{
                 sh """
                     sudo docker ps -a --filter name=tasksmanager -q | xargs -r sudo docker stop
                     sudo docker ps -a --filter name=tasksmanager -q | xargs -r sudo docker rm -f
-                    sudo docker images devsahamerlin/tasksmanager -q | xargs -r sudo docker rmi -f
-                    docker run -d --name tasksmanager -p 8083:8082 devsahamerlin/tasksmanager:${BUILD_NUMBER}
+                    sudo docker images nickymaggie2017/tasksmanager -q | xargs -r sudo docker rmi -f
+                    docker run -d --name tasksmanager -p 8083:8082 nickymaggie2017/tasksmanager:${BUILD_NUMBER}
                 """
             }
         }
@@ -172,13 +172,13 @@ pipeline{
         stage('Update Deployment File') {
                 environment {
                     GIT_REPO_NAME = "acn-taskmanger-upskills"
-                    GIT_USER_NAME = "devsahamerlin"
+                    GIT_USER_NAME = "nickymaggie2017"
                 }
                 steps {
                     withCredentials([string(credentialsId: 'gitops-user-secret-text', variable: 'GITHUB_TOKEN')]) {
                         sh '''
-                            git config user.email "devsahamerlin@gmail.com"
-                            git config user.name "Saha Merlin"
+                            git config user.email "nicholsonmac@gmail.com"
+                            git config user.name "Nicolas macmonsam"
                             BUILD_NUMBER=${BUILD_NUMBER}
                             sed -i "s/${IMAGE_TAG_VERSION}/${BUILD_NUMBER}/g" k8s/manifests/deployment.yml
                             git add k8s/manifests/deployment.yml

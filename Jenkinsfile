@@ -156,7 +156,7 @@ pipeline{
                     sudo docker ps -a --filter name=tasksmanager -q | xargs -r sudo docker stop
                     sudo docker ps -a --filter name=tasksmanager -q | xargs -r sudo docker rm -f
                     sudo docker images nickymaggie2017/tasksmanager -q | xargs -r sudo docker rmi -f
-                    docker run -d --name tasksmanager -p 8084:8082 nickymaggie2017/tasksmanager:${BUILD_NUMBER}
+                    sudo docker run -d --name tasksmanager -p 8084:8082 nickymaggie2017/tasksmanager:${BUILD_NUMBER}
                 """
             }
         }

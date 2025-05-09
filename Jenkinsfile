@@ -83,7 +83,7 @@ pipeline{
 //         }
         stage("Sonarqube Analysis "){
             steps{
-                withSonarQubeEnv('sonar-server') {
+                withSonarQubeEnv('nicolas-sonar-server') {
                     sh ''' mvn sonar:sonar \
                     -Dsonar.projectName=nicolas-acn-upskills \
                     -Dsonar.java.binaries=. \

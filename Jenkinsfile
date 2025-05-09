@@ -145,7 +145,7 @@ pipeline{
         }
         stage("TRIVY DOCKER IMAGE SCAN"){
             steps{
-                sh "trivy image nickymaggie2017/tasksmanager:BUILD_NUMBER --format table"
+                sh "trivy image nickymaggie2017/tasksmanager:${BUILD_NUMBER} --format table"
                 //sh "trivy image devsahamerlin/tasksmanager:${BUILD_NUMBER} --format table --exit-code 1 --severity CRITICAL"
             }
         }

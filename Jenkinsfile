@@ -85,9 +85,9 @@ pipeline{
             steps{
                 withSonarQubeEnv('sonar-server') {
                     sh ''' mvn sonar:sonar \
-                    -Dsonar.projectName=merlin-acn-upskills \
+                    -Dsonar.projectName=nicolas-acn-upskills \
                     -Dsonar.java.binaries=. \
-                    -Dsonar.projectKey=merlin-acn-upskills-key '''
+                    -Dsonar.projectKey=nicolas-acn-upskills '''
                 }
             }
         }
@@ -95,7 +95,7 @@ pipeline{
         stage("quality gate"){
             steps {
                 script {
-                  waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                  waitForQualityGate abortPipeline: false, credentialsId: 'nicolas-sonar-token'
                 }
            }
         }
@@ -156,7 +156,7 @@ pipeline{
                     sudo docker ps -a --filter name=tasksmanager -q | xargs -r sudo docker stop
                     sudo docker ps -a --filter name=tasksmanager -q | xargs -r sudo docker rm -f
                     sudo docker images nickymaggie2017/tasksmanager -q | xargs -r sudo docker rmi -f
-                    docker run -d --name tasksmanager -p 8083:8082 nickymaggie2017/tasksmanager:${BUILD_NUMBER}
+                    docker run -d --name tasksmanager -p 8084:8082 nickymaggie2017/tasksmanager:${BUILD_NUMBER}
                 """
             }
         }
@@ -169,7 +169,7 @@ pipeline{
             }
         }
 
-        stage('Update Deployment File') {
+/*         stage('Update Deployment File') {
                 environment {
                     GIT_REPO_NAME = "acn-taskmanger-upskills"
                     GIT_USER_NAME = "nickymaggie2017"
@@ -187,7 +187,7 @@ pipeline{
                         '''
                     }
                 }
-        }
+        } */
     }
 
 //     post {
